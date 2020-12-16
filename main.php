@@ -30,6 +30,7 @@ function sendMessage($app) {
 }
 
 function register($app) {
+        // use get method only for test.
     if(isset($_GET['name']) && isset($_GET['username']) && isset($_GET['email']) && isset($_GET['password'])) {
 
         $name = $_GET['name'];
@@ -48,38 +49,44 @@ function register($app) {
     }
 }
 
+function login($app) {
+    if(isset($_GET['username']) && isset($_GET['password'])) {
+        $username = $_GET['username'];
+        $password = $_GET['password'];
+        $result = $app->login($username, $password);
+        success("Logged In successfully", $result);
+    }
+}
 
 switch($action) {
-    case 'register':
-        // use get method only for test.
+    case 'register': // register a new user to system
         register($app);
         break;
-    case 'login':
-        if(isset($_GET['username']) && isset($_GET['password'])) {
-            $result = $app->login($_GET['username'], $_GET['password']);
-            success("Logged In successfully", $result);
-        }
+    case 'login': // login to system with username and password
+        login($app);
         break;
-    case 'logout':
+    case 'logout': // log out from system
         $app->logout();
         success("Logged Out successfully");
         break;
     case 'sendMessage':
-        sendMessage($app);
+        sendMessage($app); // send a message to a chat(group or user)
         break;
-    case 'getMessage':
+    case 'getMessage': // get a message by id only if you have access to that message
         getMessage($app);
         break;
-    case 'getSelf':
+    case 'getSelf': // return logged in user
         $result = $app->getSelf();
         success("Get Self", $result);
         break;
-    case 'uploadFile':
-        $result = $app->uploadFile($_FILES['file']);
-        $result2 = $app->getFileObject($result);
-        success("File Uploaded", $result2);
+    case 'getChat': // return information about a chat
+
+    case 'uploadFile': // upload files up to 50MB.
+        $result = $app->uploadFile($_FILES['file']); // this line uploads file
+        $result2 = $app->getFileObject($result);     // and this line get some information about file
+        success("File Uploaded", $result2);          // and this line prints that information
         break;
-    case 'getFile':
+    case 'getFile': // get a file by 32 digit hexadecimal id returned by uploadFile.
         $app->getFile($_GET['file_id']);
         break;
 
