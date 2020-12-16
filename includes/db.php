@@ -44,6 +44,12 @@ class Database {
 
     function execute() {
         if($this->stmt->execute()) {
+            if($this->handle->lastInsertId() == 0) {
+                // here the query executes successfully
+                // but does not increment lastInsertId()
+                // return non zero number...
+                return 1;
+            }
             return $this->handle->lastInsertId();
         }
         return 0;
