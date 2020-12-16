@@ -48,12 +48,6 @@ function register($app) {
     }
 }
 
-function getMessage($app) {
-    if(isset($_GET['message_id'])) {
-        $message_id = $_GET['message_id'];
-        $result = $app->getMessage($message_id, true);
-        success("Get Message", $result);
-    }
 
 }
 
