@@ -7,7 +7,7 @@ $app = new common;
 
 $url = explode('/', $_SERVER['REQUEST_URI']);
 
-$action = $url[2];
+$action = $url[3];
 
 $action = explode('?', $action)[0]; // if action contains ? just use first slice for action
 
@@ -49,9 +49,6 @@ function register($app) {
 }
 
 
-}
-
-
 switch($action) {
     case 'register':
         // use get method only for test.
@@ -77,6 +74,15 @@ switch($action) {
         $result = $app->getSelf();
         success("Get Self", $result);
         break;
+    case 'uploadFile':
+        $result = $app->uploadFile($_FILES['file']);
+        $result2 = $app->getFileObject($result);
+        success("File Uploaded", $result2);
+        break;
+    case 'getFile':
+        $app->getFile($_GET['file_id']);
+        break;
+
     default:
         echo "Do nothing\n";
         break;

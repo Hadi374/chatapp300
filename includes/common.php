@@ -133,7 +133,9 @@ class common {
         if(file_exists(FILE_PATH . $filename)) {
             return $filename;
         } else {
-            move_uploaded_file($file['tmp_name'], FILE_PATH . $filename);
+            if(!move_uploaded_file($file['tmp_name'], FILE_PATH . $filename)){
+                failed("Cannot save file to server");
+            }
             // insert to database
             $this->db->query("INSERT INTO files (md5_sum, file_name) VALUES (:md5_sum, :file_name)");
             $this->db->bind(":md5_sum", $filename);
@@ -165,11 +167,11 @@ class common {
     function getFileObject($md5_of_file) {
         //return file object.
         $result = array();
-        $result['file_path'] = FILE_PATH . $randomId;
+        $file_path= FILE_PATH . $md5_of_file;
         
-        $result['file_id'] = $randomId;
-        $result['mime_type'] = mime_content_type($result['file_path']);
-        $result['file_size'] = filesize($result['file_path']);
+        $result['file_id'] = $md5_of_file;
+        $result['mime_type'] = mime_content_type($file_path);
+        $result['file_size'] = filesize($file_path);
         
         return $result;
     }
