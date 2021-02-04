@@ -33,6 +33,16 @@ class common {
         failed("User not exist: " . $id);
     }
 
+    function getUser($id) {
+        $result = $this->getFullUser($id);
+        return array(
+            "id" => $result['id'],
+            "name" => $result['name'],
+            "username" => $result['username'],
+
+        );
+    }
+
     function getSelf() {
         if(isset($_SESSION['id']))
             return $this->getFullUser($_SESSION['id']);
