@@ -33,12 +33,47 @@ class common {
         failed("User not exist: " . $id);
     }
 
+    function getSelf() {
+        if(isset($_SESSION['id']))
+            return $this->getFullUser($_SESSION['id']);
+        failed("Please login first.");
+    }
+
     function register($name,  $username, $email, $password) {
-        echo "register " . $name . ' ' . $username . " " . $email . ' ' . $password . '<br>';
-        return array(
-            "test1" => 123,
-            "test2" => "registered"
-        );
+        if(empty($username) || empty($name)) {
+            failed("Empty name or username");
+        }
+        // check if username is used by another user.
+        $this->db->query("SELECT * FROM users WHERE username=:username");
+        $this->db->bind(":username", $username);
+        $result = $this->db->resultSet();
+        if(count($result) == 1) {
+            failed("Username Exists. choose another username or login");
+        }
+
+        if(!$this->validateEmail($email)) {
+            failed("invalid Email");
+        }
+
+        $password = $this->hashPassword($password);
+        //echo $hashed_password;
+
+        $this->db->query("INSERT INTO users(name,username,email,password) VALUES(:name,:username,:email,:password)");
+        
+        $this->db->bind('name', $name);
+        $this->db->bind('username', $username);
+        $this->db->bind('email', $email);
+        $this->db->bind('password', $password);
+        
+        $id = $this->db->execute();
+        if($id == 0) {
+            failed("Cannot create account.");
+        }  
+
+        $_SESSION['id'] = $id;
+        $result = $this->getSelf();
+            
+        return $result; //success
     }
 
     function login($username, $password) {
