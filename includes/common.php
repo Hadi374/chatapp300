@@ -77,7 +77,28 @@ class common {
     }
 
     function login($username, $password) {
-        echo "login" . $username . ' ' . $password;
+        $this->db->query("SELECT * FROM users WHERE username=:username");
+        $this->db->bind(":username", $username);
+        $result = $this->db->resultSet();
+        
+        $password = $this->hashPassword($password);
+        
+        if(count($result) != 1) {
+            failed("Cannot find user: " . $username);
+        }
+        
+        if($result[0]['password'] != $password) {
+            failed("Invalid password!");
+        } 
+        
+        $_SESSION['id'] = $result[0]['id'];
+        return $this->getSelf(); //success("Logged In successfully!", $result);
+        
+    }
+
+    function logout() {
+        unset($_SESSION['id']);
+        session_abort();
     }
 
 }

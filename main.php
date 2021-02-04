@@ -25,7 +25,14 @@ switch($action) {
         }
         break;
     case 'login':
-        $app->login('name', 'pass');
+        if(isset($_GET['username']) && isset($_GET['password'])) {
+            $result = $app->login($_GET['username'], $_GET['password']);
+            success("Logged In successfully", $result);
+        }
+        break;
+    case 'logout':
+        $app->logout();
+        success("Logged Out successfully");
         break;
     default:
         echo "Do nothing\n";
